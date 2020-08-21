@@ -22881,7 +22881,7 @@ async function main() {
 
                 console.log(`Downloading ${file.name}`)
 
-                const response = await octokit.actions.downloadArchive({
+                const response = await octokit.actions.downloadArtifact({
                     owner: repositoryOwner,
                     repo: repositoryName,
                     artifact_id: file.id,

@@ -1,0 +1,32 @@
+name: 'Download artifacts'
+description: 'Downloads artifact from run'
+inputs:
+  repository:
+    description: 'Repository path'
+    required: false
+  authToken:
+    description: 'Access token if required to access repo'
+    required: false
+  workflow-id:
+    description: 'Workflow to pull'
+    required: false
+  run-id:
+    description: 'Run to download'
+    required: false
+  artifact-name:
+    description: 'Artifact to download'
+    required: false
+  directory:
+    description: 'Where to place file'
+    required: false
+  branch:
+    description: 'Branch to get run from'
+    required: false
+    default: 'master'
+  extract:
+    description: 'Extract files (for ZIPs, this will remove the double-zip that is uploaded instead'
+    required: false
+    default: 'true'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

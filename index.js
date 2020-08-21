@@ -2,6 +2,7 @@ import {join} from "path";
 import {appendFileSync} from "fs";
 import {Extract} from "unzipper";
 import {resolve} from 'path'
+import {Octokit} from "@octokit/core";
 
 const core = require("@actions/core");
 const github = require("@actions/github");
@@ -11,7 +12,9 @@ main().finally();
 async function main() {
     try {
         const token = core.getInput('authToken')
-        const octokit = github.getOctokit(token)
+        const octokit = new Octokit({
+            auth: token
+        });
         const repo = core.getInput('repository') || `${github.context.repo.owner}/${github.context.repo.repo}`
 
         const splitRepository = repo.split('/')

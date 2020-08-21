@@ -32,7 +32,6 @@ async function main() {
                 throw new Error('Workflow ID must be provided if no Run ID is provided')
             }
 
-            console.log('Downloading workflow history')
             const workflow = await octokit.actions.listWorkflowRuns({
                 owner: repositoryOwner,
                 repo: repositoryName,
@@ -42,8 +41,6 @@ async function main() {
                 event: 'push',
                 branch: core.getInput('branch') || 'master'
             });
-
-            console.debug(JSON.stringify(workflow.data));
 
             if (!workflow.data || !workflow.data.workflow_runs || !workflow.data.workflow_runs[0]) {
                 throw new Error('No run found for given workflow')
@@ -59,32 +56,27 @@ async function main() {
             run_id: runId,
         });
 
-        console.log(JSON.stringify(artifacts));
         const source = core.getInput('artifact-name')
 
-        let files = [];
+        let path = resolve(core.getInput("directory") || '.');
         for(let f in artifacts.data.artifacts) {
             if (!source || source === artifacts.data.artifacts[f].name) {
-                files = artifacts.data.artifacts[f]
-            }
-        }
+                const file = artifacts.data.artifacts[f];
 
-        let path = resolve(core.getInput("directory") || '.');
+                console.log(`Downloading ${file.name}`)
 
-        for (let f in files) {
-            console.log(`Downloading ${files[f].name}`)
+                const response = await octokit.actions.downloadArchive({
+                    owner: repositoryOwner,
+                    repo: repositoryName,
+                    artifact_id: file.id,
+                    archive_format: "zip"
+                });
 
-            const response = await octokit.actions.downloadArchive({
-                owner: repositoryOwner,
-                repo: repositoryName,
-                artifact_id: files[f].artifact_id,
-                archive_format: "zip"
-            });
-
-            if (core.getInput("extract") === "true") {
-                response.data.pipe(Extract({path: path}));
-            } else {
-                appendFileSync(join(path, core.getInput('') || files[f].name + ".zip"), response.data);
+                if (core.getInput("extract") === "true") {
+                    response.data.pipe(Extract({path: path}));
+                } else {
+                    appendFileSync(join(path, core.getInput('') || files[f].name + ".zip"), response.data);
+                }
             }
         }
     } catch (error) {

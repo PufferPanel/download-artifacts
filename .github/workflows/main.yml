@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: pufferpanel/download-artifacts
+    - uses: pufferpanel/download-artifacts@master
       with:
         repo: 'PufferPanel/PufferPanel'
         workflow-id: 'build.yml'

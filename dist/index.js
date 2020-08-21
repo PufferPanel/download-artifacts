@@ -22858,6 +22858,9 @@ async function main() {
                 event: 'push',
                 branch: core.getInput('branch') || 'master'
             });
+
+            console.log(JSON.stringify(workflow));
+
             if (!workflow || !workflow.workflow_runs || !workflow.workflow_runs[0]) {
                 throw new Error('No run found for given workflow')
             }
@@ -22872,6 +22875,7 @@ async function main() {
             run_id: runId,
         });
 
+        console.log(JSON.stringify(artifacts));
         const source = core.getInput('artifact-name')
 
         let files = [];
@@ -22884,6 +22888,8 @@ async function main() {
         let path = Object(path__WEBPACK_IMPORTED_MODULE_0__.resolve)(core.getInput("directory") || '.');
 
         for (let f in files) {
+            console.log(`Downloading ${files[f].name}`)
+
             const response = await octokit.actions.downloadArchive({
                 owner: repositoryOwner,
                 repo: repositoryName,

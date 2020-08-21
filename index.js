@@ -43,12 +43,12 @@ async function main() {
                 branch: core.getInput('branch') || 'master'
             });
 
-            console.log(JSON.stringify(workflow));
+            console.debug(JSON.stringify(workflow.data));
 
-            if (!workflow || !workflow.workflow_runs || !workflow.workflow_runs[0]) {
+            if (!workflow.data || !workflow.data.workflow_runs || !workflow.data.workflow_runs[0]) {
                 throw new Error('No run found for given workflow')
             }
-            runId = workflow.workflow_runs[0].id;
+            runId = workflow.data.workflow_runs[0].id;
         }
 
         console.log(`Download artifact from run id ${runId}`);
@@ -63,9 +63,9 @@ async function main() {
         const source = core.getInput('artifact-name')
 
         let files = [];
-        for(let f in artifacts.artifacts) {
-            if (!source || source === artifacts.artifacts[f].name) {
-                files = artifacts.artifacts[f]
+        for(let f in artifacts.data.artifacts) {
+            if (!source || source === artifacts.data.artifacts[f].name) {
+                files = artifacts.data.artifacts[f]
             }
         }
 

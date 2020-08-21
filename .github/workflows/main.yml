@@ -1,0 +1,15 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: pufferpanel/download-artifacts
+      with:
+        repo: 'PufferPanel/PufferPanel'
+        workflow-id: 'build.yml'

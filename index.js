@@ -2,10 +2,10 @@ import {join} from "path";
 import {appendFileSync} from "fs";
 import {Extract} from "unzipper";
 import {resolve} from 'path'
-import {Octokit} from "@octokit/core";
 
 const core = require("@actions/core");
 const github = require("@actions/github");
+const { Octokit } = require("@octokit/rest");
 
 main().finally();
 

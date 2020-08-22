@@ -5,16 +5,13 @@ import {resolve} from 'path'
 
 const core = require("@actions/core");
 const github = require("@actions/github");
-const { Octokit } = require("@octokit/rest");
 
 main().finally();
 
 async function main() {
     try {
-        const token = core.getInput('authToken')
-        const octokit = new Octokit({
-            auth: token
-        });
+        const token = core.getInput('authToken') || getRuntimeToken();
+        const octokit = github.getOctokit(token);
         const repo = core.getInput('repository') || `${github.context.repo.owner}/${github.context.repo.repo}`
 
         const splitRepository = repo.split('/')
@@ -82,4 +79,12 @@ async function main() {
     } catch (error) {
         core.setFailed(error.message);
     }
+}
+
+function getRuntimeToken() {
+    const token = process.env['ACTIONS_RUNTIME_TOKEN']
+    if (!token) {
+        throw new Error('Unable to get ACTIONS_RUNTIME_TOKEN env variable')
+    }
+    return token
 }

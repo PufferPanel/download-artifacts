@@ -8304,31 +8304,6 @@ function done(stream, er, data) {
 
 /***/ }),
 
-/***/ 375:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var core = __webpack_require__(762);
-var pluginRequestLog = __webpack_require__(883);
-var pluginPaginateRest = __webpack_require__(193);
-var pluginRestEndpointMethods = __webpack_require__(44);
-
-const VERSION = "18.0.3";
-
-const Octokit = core.Octokit.plugin(pluginRequestLog.requestLog, pluginRestEndpointMethods.restEndpointMethods, pluginPaginateRest.paginateRest).defaults({
-  userAgent: `octokit-rest.js/${VERSION}`
-});
-
-exports.Octokit = Octokit;
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
 /***/ 387:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -21837,44 +21812,6 @@ module.exports = function (Promise, apiRejection, tryConvertToPromise,
 
 /***/ }),
 
-/***/ 883:
-/***/ (function(__unusedmodule, exports) {
-
-"use strict";
-
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-const VERSION = "1.0.0";
-
-/**
- * @param octokit Octokit instance
- * @param options Options passed to Octokit constructor
- */
-
-function requestLog(octokit) {
-  octokit.hook.wrap("request", (request, options) => {
-    octokit.log.debug("request", options);
-    const start = Date.now();
-    const requestOptions = octokit.request.endpoint.parse(options);
-    const path = requestOptions.url.replace(options.baseUrl, "");
-    return request(options).then(response => {
-      octokit.log.info(`${requestOptions.method} ${path} - ${response.status} in ${Date.now() - start}ms`);
-      return response;
-    }).catch(error => {
-      octokit.log.info(`${requestOptions.method} ${path} - ${error.status} in ${Date.now() - start}ms`);
-      throw error;
-    });
-  });
-}
-requestLog.VERSION = VERSION;
-
-exports.requestLog = requestLog;
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
 /***/ 891:
 /***/ (function(module) {
 
@@ -22821,16 +22758,13 @@ __webpack_require__.r(__webpack_exports__);
 
 const core = __webpack_require__(432);
 const github = __webpack_require__(438);
-const { Octokit } = __webpack_require__(375);
 
 main().finally();
 
 async function main() {
     try {
-        const token = core.getInput('authToken')
-        const octokit = new Octokit({
-            auth: token
-        });
+        const token = core.getInput('authToken') || getRuntimeToken();
+        const octokit = github.getOctokit(token);
         const repo = core.getInput('repository') || `${github.context.repo.owner}/${github.context.repo.repo}`
 
         const splitRepository = repo.split('/')
@@ -22898,6 +22832,14 @@ async function main() {
     } catch (error) {
         core.setFailed(error.message);
     }
+}
+
+function getRuntimeToken() {
+    const token = process.env['ACTIONS_RUNTIME_TOKEN']
+    if (!token) {
+        throw new Error('Unable to get ACTIONS_RUNTIME_TOKEN env variable')
+    }
+    return token
 }
 
 /***/ }),

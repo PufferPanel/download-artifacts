@@ -71,7 +71,7 @@ async function main() {
                 });
 
                 if (core.getInput("extract") === "true") {
-                    const stream = Readable.from(response.data);
+                    const stream = Readable.from(response.data.toString());
                     stream.pipe(Extract({path: path}));
                 } else {
                     appendFileSync(join(path, core.getInput('') || file.name + ".zip"), response.data);
@@ -79,6 +79,7 @@ async function main() {
             }
         }
     } catch (error) {
+        console.log(error);
         core.setFailed(error.message);
     }
 }

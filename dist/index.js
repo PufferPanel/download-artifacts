@@ -22826,7 +22826,7 @@ async function main() {
                 });
 
                 if (core.getInput("extract") === "true") {
-                    const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(response.data);
+                    const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(Buffer.from(response.data));
                     stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
                 } else {
                     Object(fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync)(Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || file.name + ".zip"), response.data);
@@ -22834,6 +22834,7 @@ async function main() {
             }
         }
     } catch (error) {
+        console.log(error);
         core.setFailed(error.message);
     }
 }

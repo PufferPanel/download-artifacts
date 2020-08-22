@@ -13,3 +13,4 @@ jobs:
       with:
         repository: 'PufferPanel/PufferPanel'
         workflow-id: 'build.yml'
+        authToken: ${{ secrets.AUTH_TOKEN }}

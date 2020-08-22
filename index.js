@@ -2,6 +2,7 @@ import {join} from "path";
 import {appendFileSync} from "fs";
 import {Extract} from "unzipper";
 import {resolve} from 'path'
+import {Readable} from 'stream'
 
 const core = require("@actions/core");
 const github = require("@actions/github");
@@ -70,9 +71,10 @@ async function main() {
                 });
 
                 if (core.getInput("extract") === "true") {
-                    response.data.pipe(Extract({path: path}));
+                    const stream = Readable.from(response.data);
+                    stream.pipe(Extract({path: path}));
                 } else {
-                    appendFileSync(join(path, core.getInput('') || files[f].name + ".zip"), response.data);
+                    appendFileSync(join(path, core.getInput('') || file.name + ".zip"), response.data);
                 }
             }
         }

@@ -22751,6 +22751,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var unzipper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(639);
 /* harmony import */ var unzipper__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(unzipper__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(413);
+/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -22823,9 +22826,10 @@ async function main() {
                 });
 
                 if (core.getInput("extract") === "true") {
-                    response.data.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
+                    const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(response.data);
+                    stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
                 } else {
-                    Object(fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync)(Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || files[f].name + ".zip"), response.data);
+                    Object(fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync)(Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || file.name + ".zip"), response.data);
                 }
             }
         }

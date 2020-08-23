@@ -22825,13 +22825,11 @@ async function main() {
                     archive_format: "zip"
                 });
 
-                console.log(response);
-
                 if (core.getInput("extract") === "true") {
                     const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(Buffer.from(response.data));
                     stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
                 } else {
-                    Object(fs__WEBPACK_IMPORTED_MODULE_1__.appendFileSync)(Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || file.name + ".zip"), response.data);
+                    Object(fs__WEBPACK_IMPORTED_MODULE_1__.writeFileSync)(Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || file.name + ".zip"), Buffer.from(response.data));
                 }
             }
         }

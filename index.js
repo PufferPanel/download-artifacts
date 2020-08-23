@@ -1,5 +1,5 @@
 import {join} from "path";
-import {appendFileSync} from "fs";
+import {writeFileSync} from "fs";
 import {Extract} from "unzipper";
 import {resolve} from 'path'
 import {Readable} from 'stream'
@@ -70,13 +70,11 @@ async function main() {
                     archive_format: "zip"
                 });
 
-                console.log(response);
-
                 if (core.getInput("extract") === "true") {
                     const stream = Readable.from(Buffer.from(response.data));
                     stream.pipe(Extract({path: path}));
                 } else {
-                    appendFileSync(join(path, core.getInput('') || file.name + ".zip"), response.data);
+                    writeFileSync(join(path, core.getInput('') || file.name + ".zip"), Buffer.from(response.data));
                 }
             }
         }

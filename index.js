@@ -70,6 +70,8 @@ async function main() {
                     archive_format: "zip"
                 });
 
+                console.log(response);
+
                 if (core.getInput("extract") === "true") {
                     const stream = Readable.from(Buffer.from(response.data));
                     stream.pipe(Extract({path: path}));

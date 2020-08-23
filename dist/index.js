@@ -22825,6 +22825,8 @@ async function main() {
                     archive_format: "zip"
                 });
 
+                console.log(response);
+
                 if (core.getInput("extract") === "true") {
                     const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(Buffer.from(response.data));
                     stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));

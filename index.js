@@ -7,8 +7,6 @@ import {Readable} from 'stream'
 const core = require("@actions/core");
 const github = require("@actions/github");
 
-main().finally();
-
 async function main() {
     try {
         const token = core.getInput('authToken') || getRuntimeToken();
@@ -71,8 +69,7 @@ async function main() {
                 });
 
                 if (core.getInput("extract") === "true") {
-                    const stream = Readable.from(Buffer.from(response.data));
-                    stream.pipe(Extract({path: path}));
+                    await extract(path, response.data)
                 } else {
                     writeFileSync(join(path, core.getInput('') || file.name + ".zip"), Buffer.from(response.data));
                 }
@@ -91,3 +88,13 @@ function getRuntimeToken() {
     }
     return token
 }
+
+async function extract(path, data) {
+    return new Promise((resolve, reject) => {
+        const stream = Readable.from(Buffer.from(data));
+        const dest = stream.pipe(Extract({path: path}));
+        dest.on('finish', resolve)
+    });
+}
+
+main();

@@ -1,7 +1,7 @@
 {
   "name": "download-artifacts",
   "version": "1.0.0",
-  "description": "Downloads arifacts from a run",
+  "description": "Downloads artifacts from a run",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build index.js"

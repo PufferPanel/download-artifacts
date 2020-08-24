@@ -22762,8 +22762,6 @@ __webpack_require__.r(__webpack_exports__);
 const core = __webpack_require__(432);
 const github = __webpack_require__(438);
 
-main().finally();
-
 async function main() {
     try {
         const token = core.getInput('authToken') || getRuntimeToken();
@@ -22826,8 +22824,7 @@ async function main() {
                 });
 
                 if (core.getInput("extract") === "true") {
-                    const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(Buffer.from(response.data));
-                    stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
+                    await extract(path, response.data)
                 } else {
                     Object(fs__WEBPACK_IMPORTED_MODULE_1__.writeFileSync)(Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || file.name + ".zip"), Buffer.from(response.data));
                 }
@@ -22846,6 +22843,16 @@ function getRuntimeToken() {
     }
     return token
 }
+
+async function extract(path, data) {
+    return new Promise((resolve, reject) => {
+        const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(Buffer.from(data));
+        const dest = stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
+        dest.on('finish', resolve)
+    });
+}
+
+main();
 
 /***/ }),
 

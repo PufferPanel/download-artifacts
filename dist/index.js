@@ -22846,7 +22846,15 @@ function getRuntimeToken() {
 
 async function extract(path, data) {
     return new Promise((resolve, reject) => {
-        const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(Buffer.from(data));
+        let buffer = null;
+        if (data instanceof ArrayBuffer) {
+            buffer = Buffer.from(data);
+        } else if (data instanceof String) {
+            buffer = data;
+        } else {
+            reject(new Error('Data is not of ArrayBuffer or String, type is ' + (typeof data)));
+        }
+        const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(buffer);
         const dest = stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
         dest.on('finish', resolve)
     });

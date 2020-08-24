@@ -1,8 +1,7 @@
 import {join} from "path";
-import {writeFileSync} from "fs";
+import {createReadStream, unlinkSync, writeFileSync} from "fs";
 import {Extract} from "unzipper";
 import {resolve} from 'path'
-import {Readable} from 'stream'
 
 const core = require("@actions/core");
 const github = require("@actions/github");
@@ -68,10 +67,11 @@ async function main() {
                     archive_format: "zip"
                 });
 
+                const filePath = join(path, core.getInput('') || file.name + ".zip");
+                writeFileSync(filePath, Buffer.from(response.data));
                 if (core.getInput("extract") === "true") {
-                    await extract(path, response.data)
-                } else {
-                    writeFileSync(join(path, core.getInput('') || file.name + ".zip"), Buffer.from(response.data));
+                    await createReadStream(filePath).pipe(Extract({path: path})).promise();
+                    unlinkSync(filePath);
                 }
             }
         }
@@ -87,22 +87,6 @@ function getRuntimeToken() {
         throw new Error('Unable to get ACTIONS_RUNTIME_TOKEN env variable')
     }
     return token
-}
-
-async function extract(path, data) {
-    return new Promise((resolve, reject) => {
-        let buffer = null;
-        if (data instanceof ArrayBuffer) {
-            buffer = Buffer.from(data);
-        } else if (data instanceof String) {
-            buffer = data;
-        } else {
-            reject(new Error('Data is not of ArrayBuffer or String, type is ' + (typeof data)));
-        }
-        const stream = Readable.from(buffer);
-        const dest = stream.pipe(Extract({path: path}));
-        dest.on('finish', resolve)
-    });
 }
 
 main();

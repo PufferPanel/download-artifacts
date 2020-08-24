@@ -22751,9 +22751,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var unzipper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(639);
 /* harmony import */ var unzipper__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(unzipper__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(413);
-/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_3__);
-
 
 
 
@@ -22823,10 +22820,11 @@ async function main() {
                     archive_format: "zip"
                 });
 
+                const filePath = Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || file.name + ".zip");
+                Object(fs__WEBPACK_IMPORTED_MODULE_1__.writeFileSync)(filePath, Buffer.from(response.data));
                 if (core.getInput("extract") === "true") {
-                    await extract(path, response.data)
-                } else {
-                    Object(fs__WEBPACK_IMPORTED_MODULE_1__.writeFileSync)(Object(path__WEBPACK_IMPORTED_MODULE_0__.join)(path, core.getInput('') || file.name + ".zip"), Buffer.from(response.data));
+                    await Object(fs__WEBPACK_IMPORTED_MODULE_1__.createReadStream)(filePath).pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path})).promise();
+                    Object(fs__WEBPACK_IMPORTED_MODULE_1__.unlinkSync)(filePath);
                 }
             }
         }
@@ -22842,22 +22840,6 @@ function getRuntimeToken() {
         throw new Error('Unable to get ACTIONS_RUNTIME_TOKEN env variable')
     }
     return token
-}
-
-async function extract(path, data) {
-    return new Promise((resolve, reject) => {
-        let buffer = null;
-        if (data instanceof ArrayBuffer) {
-            buffer = Buffer.from(data);
-        } else if (data instanceof String) {
-            buffer = data;
-        } else {
-            reject(new Error('Data is not of ArrayBuffer or String, type is ' + (typeof data)));
-        }
-        const stream = stream__WEBPACK_IMPORTED_MODULE_3__.Readable.from(buffer);
-        const dest = stream.pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path}));
-        dest.on('finish', resolve)
-    });
 }
 
 main();

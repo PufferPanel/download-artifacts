@@ -26905,6 +26905,8 @@ async function main() {
                     await Object(fs__WEBPACK_IMPORTED_MODULE_1__.createReadStream)(filePath).pipe(Object(unzipper__WEBPACK_IMPORTED_MODULE_2__.Extract)({path: path})).promise();
                     Object(fs__WEBPACK_IMPORTED_MODULE_1__.unlinkSync)(filePath);
                 }
+
+                core.setOutput("file", file.name);
             }
         }
     } catch (error) {

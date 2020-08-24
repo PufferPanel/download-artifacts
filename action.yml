@@ -27,6 +27,9 @@ inputs:
     description: 'Extract files (for ZIPs, this will remove the double-zip that is uploaded instead'
     required: false
     default: 'true'
+outputs:
+  file:
+    description: 'Name of last file downloaded'
 runs:
   using: 'node12'
   main: 'dist/index.js'

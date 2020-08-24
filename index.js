@@ -74,6 +74,8 @@ async function main() {
                     await createReadStream(filePath).pipe(Extract({path: path})).promise();
                     unlinkSync(filePath);
                 }
+
+                core.setOutput("file", file.name);
             }
         }
     } catch (error) {

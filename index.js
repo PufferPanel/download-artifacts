@@ -5,6 +5,7 @@ import {resolve} from 'path'
 
 const core = require("@actions/core");
 const github = require("@actions/github");
+const micromatch = require('micromatch');
 
 async function main() {
     try {
@@ -55,7 +56,7 @@ async function main() {
 
         let path = resolve(core.getInput("directory") || '.');
         for(let f in artifacts.data.artifacts) {
-            if (!source || source === artifacts.data.artifacts[f].name) {
+            if (!source || micromatch.isMatch(artifacts.data.artifacts[f].name, source)) {
                 const file = artifacts.data.artifacts[f];
 
                 console.log(`Downloading ${file.name}`)
